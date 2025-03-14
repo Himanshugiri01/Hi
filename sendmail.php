@@ -1,24 +1,32 @@
 <?php
-// Check for empty fields
-if(empty($_POST['name'])      ||
-   empty($_POST['email'])     ||
-   empty($_POST['message'])   ||
-   !filter_var($_POST['email'],FILTER_VALIDATE_EMAIL))
-   {
-   echo "No arguments Provided!";
-   return false;
-   }
-   
-$name = strip_tags(htmlspecialchars($_POST['name']));
-$email_address = strip_tags(htmlspecialchars($_POST['email']));
-$message = strip_tags(htmlspecialchars($_POST['message']));
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get form data
+    $name = htmlspecialchars($_POST['name']);
+    $email = htmlspecialchars($_POST['email']);
+    $message = htmlspecialchars($_POST['message']);
 
-// Create the email and send the message
-$to = 'girihimanshu722@gmail.com'; // Replace with your own email address
-$email_subject = "Website Message Aleart: $name";
-$email_body = "You have received a new message from your website contact form.\n\n"."Here are the details:\n\nName: $name\n\nEmail: $email_address\n\nMessage:\n$message";
-$headers = "From: noreply@your-domain.com\r\n";
-$headers .= "Reply-To: $email_address\r\n";   
-mail($to,$email_subject,$email_body,$headers);
-return true;         
+    // Set recipient email address
+    $to = "girihimanshu722@gmail.com"; // Replace with your email address
+
+    // Set email subject
+    $subject = "New Message from $name";
+
+    // Compose the email message
+    $email_message = "Name: $name\n";
+    $email_message .= "Email: $email\n\n";
+    $email_message .= "Message:\n$message\n";
+
+    // Set email headers
+    $headers = "From: $email\r\n";
+    $headers .= "Reply-To: $email\r\n";
+
+    // Send the email
+    if (mail($to, $subject, $email_message, $headers)) {
+        echo "Message sent successfully!";
+    } else {
+        echo "Failed to send message. Please try again.";
+    }
+} else {
+    echo "Invalid request method.";
+}
 ?>
